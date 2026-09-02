@@ -4,3 +4,4 @@ git-tutorial
 - fix-B
 - feature-C
 - feature-D
+- feature-E
