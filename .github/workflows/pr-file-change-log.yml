@@ -1,0 +1,38 @@
+name: Log Pull Request File Changes
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+permissions:
+  contents: read
+
+jobs:
+  log-file-changes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out pull request
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Log added, deleted, and changed files
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          echo '=== Added files ==='
+          git diff --name-only --diff-filter=A "$BASE_SHA...$HEAD_SHA"
+
+          echo '=== Deleted files ==='
+          git diff --name-only --diff-filter=D "$BASE_SHA...$HEAD_SHA"
+
+          echo '=== Changed files ==='
+          git diff --name-status "$BASE_SHA...$HEAD_SHA"
+
+          echo '=== Full diff ==='
+          git diff "$BASE_SHA...$HEAD_SHA"
